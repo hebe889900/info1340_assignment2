@@ -28,15 +28,21 @@ def decide(input_file, watchlist_file, countries_file):
     """
     with open(input_file, "r") as file_reader_input:
         file_contents_input = file_reader_input.read()
-    json_contents_input = json.loads(file_contents_input)
+        json_contents_input = json.loads(file_contents_input)
 
     with open(watchlist_file, "r") as file_reader_watchlist:
         file_contents_watchlist = file_reader_watchlist.read()
-    json_contents_watchlist = json.loads(file_contents_watchlist)
+        json_contents_watchlist = json.loads(file_contents_watchlist)
 
     with open(countries_file, "r") as file_reader_countries:
         file_contents_countries = file_reader_countries.read()
-    json_contents_countries = json.loads(file_contents_countries)
+        json_contents_countries = json.loads(file_contents_countries)
+
+
+    #If the reason for entry is returning home and the traveller’s home country is Kanadia (country code: KAN), the traveller will be accepted.
+    json_contents_input = [x.lower() for x in json_contents_input]
+    json_contents_watchlist = [x.lower() for x in json_contents_watchlist]
+    json_contents_countries = [dict((k.lower(), v.lower()) for k,v in json_contents_countries.iteritems())]
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
     for entry_dictionary in json_contents_input:
@@ -103,7 +109,7 @@ def decide(input_file, watchlist_file, countries_file):
 
     #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
 
-    #If the reason for entry is returning home and the traveller’s home country is Kanadia (country code: KAN), the traveller will be accepted.
+
 
 
 
