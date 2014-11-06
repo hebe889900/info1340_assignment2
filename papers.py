@@ -39,13 +39,15 @@ def decide(input_file, watchlist_file, countries_file):
         json_contents_countries = json.loads(file_contents_countries)
 
 
-    #If the reason for entry is returning home and the traveller’s home country is Kanadia (country code: KAN), the traveller will be accepted.
+     #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
     json_contents_input = [x.lower() for x in json_contents_input]
     json_contents_watchlist = [x.lower() for x in json_contents_watchlist]
     json_contents_countries = [dict((k.lower(), v.lower()) for k,v in json_contents_countries.iteritems())]
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
     for entry_dictionary in json_contents_input:
+         #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
+        entry_dictionary = [dict((k.lower(), v.lower()) for k,v in entry_dictionary.iteritems())]
 
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
@@ -77,6 +79,8 @@ def decide(input_file, watchlist_file, countries_file):
 
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
         for watchlist_dictionary in file_contents_watchlist:
+            #ignore cases
+            watchlist_dictionary = [dict((k.lower(), v.lower()) for k,v in watchlist_dictionary.iteritems())]
             if entry_dictionary[key_passport] in watchlist_dictionary:
                 return ["Secondary"]
 
@@ -86,6 +90,8 @@ def decide(input_file, watchlist_file, countries_file):
 
     #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
         for countries_dictionary in file_contents_countries:
+            #ignore cases
+            countries_dictionary = [dict((k.lower(), v.lower()) for k,v in countries_dictionary.iteritems())]
             if countries_dictionary[entry_dictionary[key_from][key_country]][key_medical_advisory].isspace is False:
                 return ["Quarantine"]
 
@@ -108,7 +114,7 @@ def decide(input_file, watchlist_file, countries_file):
                             return ["Reject"]
 
     #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
-
+    #If the reason for entry is returning home and the traveller’s home country is Kanadia (country code: KAN), the traveller will be accepted.
 
 
 

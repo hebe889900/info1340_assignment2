@@ -11,7 +11,7 @@ __license__ = "MIT License"
 __status__ = "Prototype"
 
 # imports one per line
-import pytest
+import papers
 from papers import decide
 
 
@@ -22,7 +22,7 @@ def test_basic():
 
 
 def test_files():
-    with pytest.raises(FileNotFoundError):
+    with papers.raises(FileNotFoundError):
         decide("test_returning_citizen.json", "", "countries.json")
 
 # add functions for other tests
