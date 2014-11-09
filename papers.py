@@ -26,6 +26,7 @@ def decide(input_file, watchlist_file, countries_file):
         an entry or transit visa is required, and whether there is currently a medical advisory
     :return: List of strings. Possible values of strings are: "Accept", "Reject", "Secondary", and "Quarantine"
     """
+    #json.contents.input contains the list of travelers attempting to enter Kanadia's border
     with open(input_file, "r") as file_reader_input:
         file_contents_input = file_reader_input.read()
         json_contents_input_in_list = json.loads(file_contents_input)
