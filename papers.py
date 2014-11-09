@@ -55,11 +55,6 @@ def decide(input_file, watchlist_file, countries_file):
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
     for entry_dictionary in json_contents_input_in_list:
-        for key_in_entry_dictionary in entry_dictionary.keys():
-            key_in_entry_dictionary = key_in_entry_dictionary.lower();#To make every string key in the dictionary to lowercase;
-        for value_in_entry_dictionary in entry_dictionary.values():
-            if isinstance(value_in_entry_dictionary,unicode):
-                value_in_entry_dictionary = value_in_entry_dictionary.lower();#To make every string in the sub-dictionary of the entry record to lowercase;
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
 
@@ -95,17 +90,20 @@ def decide(input_file, watchlist_file, countries_file):
                 continue
 
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
+
         for watchlist_dictionary in json_contents_watchlist_in_list:
             #ignore cases
-            watchlist_dictionary = [dict((k.lower(), v.lower()) for k,v in watchlist_dictionary.iteritems())]
-            if entry_dictionary[key_passport] in watchlist_dictionary:
+            entry_dictionary[key_passport] = entry_dictionary[key_passport].lower();
+            watchlist_dictionary = dict((k.lower(), v.lower()) for k,v in watchlist_dictionary.iteritems())# Make each item in watchlist to lowercase
+            if entry_dictionary[key_passport] == watchlist_dictionary[key_passport]:
                 string_result.append("Secondary")
                 continue
 
-            if entry_dictionary[key_last_name] in watchlist_dictionary:
-                if entry_dictionary[key_first_name] in watchlist_dictionary:
+            if entry_dictionary[key_last_name] == watchlist_dictionary[key_last_name]:
+                if entry_dictionary[key_first_name] == watchlist_dictionary[key_first_name]:
                     string_result.append("Secondary")
                     continue
+
 
     #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
         for countries_dictionary in json_contents_countries_in_dictionary:
@@ -134,7 +132,7 @@ def decide(input_file, watchlist_file, countries_file):
                         if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
                             string_result.append("Reject")
                             continue
-        string_result.append("Reject")
+        continue
     return string_result
 
 #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
