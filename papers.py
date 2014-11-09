@@ -81,7 +81,39 @@ def decide(input_file, watchlist_file, countries_file):
 
         home_dictionary = entry_dictionary[key_home]
 
-        home_dictionary = dict((k.lower(), v.lower()) for k, v in home_dictionary.iteritems())
+        home_dictionary = dict((k.lower(), v.lower()) for k, v in home_dictionary.iteritems())# Make the home dictionary inside the whole dictionary to lowercase
+
+    #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
+    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+        if key_visa in entry_dictionary.keys():
+            if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_visitor_visa_required] == 1:
+
+                if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
+                    string_result.append("Reject")
+                    continue
+
+    #If the reason for entry is transit and the visitor has a passport from a country from which a transit visa is required,
+    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+        if key_visa in entry_dictionary.keys():
+            if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_via_country]][key_transit_visa_required] == 1:
+                if key_visa in entry_dictionary:
+                    if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
+                        string_result.append("Reject")
+                        continue
+
+    #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
+        for countries_dictionary in json_contents_countries_in_dictionary:
+            key_code_country = entry_dictionary[key_from][key_from_country]
+            if json_contents_countries_in_dictionary[key_code_country][key_medical_advisory] == "MUMPS":
+                string_result.append("Quarantine")
+                break
+
+            if key_via in entry_dictionary:
+                print(json_contents_countries_in_dictionary[key_code_country][key_medical_advisory])
+                if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_medical_advisory] == "" is False:
+                    string_result.append("Quarantine")
+                    break
+        continue
 
 
         if home_dictionary[key_country_in_home] == "kan":
@@ -105,38 +137,14 @@ def decide(input_file, watchlist_file, countries_file):
                     continue
 
 
-    #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
-        for countries_dictionary in json_contents_countries_in_dictionary:
-            key_code_country = entry_dictionary[key_from][key_from_country]
-            if json_contents_countries_in_dictionary[key_code_country][key_medical_advisory].isspace is False:
-                string_result.append("Quarantine")
-                continue
 
-            if key_via in entry_dictionary:
-                if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_medical_advisory].isspace is False:
-                    string_result.append("Quarantine")
-                    continue
 
-    #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
-                if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_visitor_visa_required] == 1:
-                    if key_visa in entry_dictionary:
-                        if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
-                            string_result.append("Reject")
-                            continue
 
-    #If the reason for entry is transit and the visitor has a passport from a country from which a transit visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
-                if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_via_country]][key_transit_visa_required] == 1:
-                    if key_visa in entry_dictionary:
-                        if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
-                            string_result.append("Reject")
-                            continue
         continue
     return string_result
 
 #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
-print(decide("test_watchlist.json", "watchlist.json", "countries.json"))
+
 
 
 
@@ -168,4 +176,5 @@ def valid_date_format(date_string):
         return True
     except ValueError:
         return False
+
 
