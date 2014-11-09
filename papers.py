@@ -104,13 +104,13 @@ def decide(input_file, watchlist_file, countries_file):
     #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
         for countries_dictionary in json_contents_countries_in_dictionary:
             key_code_country = entry_dictionary[key_from][key_from_country]
-            if json_contents_countries_in_dictionary[key_code_country][key_medical_advisory] == "MUMPS":
+            if (json_contents_countries_in_dictionary[key_code_country][key_medical_advisory] == "") is False:
                 string_result.append("Quarantine")
                 break
 
             if key_via in entry_dictionary:
                 print(json_contents_countries_in_dictionary[key_code_country][key_medical_advisory])
-                if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_medical_advisory] == "" is False:
+                if (json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_medical_advisory] == "" )is False:
                     string_result.append("Quarantine")
                     break
         continue
@@ -139,9 +139,11 @@ def decide(input_file, watchlist_file, countries_file):
 
 
 
-
+        string_result.append("Reject")
         continue
     return string_result
+
+print (decide("test_quarantine.json", "watchlist.json", "countries.json"))
 
 #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
 
