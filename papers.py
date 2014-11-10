@@ -31,6 +31,7 @@ def decide(input_file, watchlist_file, countries_file):
         file_contents_input = file_reader_input.read()
         json_contents_input_in_list = json.loads(file_contents_input)
 
+    #json.contents.watchlist contains the list of travelers on the watchlist who should be sent to "secondary"
     with open(watchlist_file, "r") as file_reader_watchlist:
         file_contents_watchlist = file_reader_watchlist.read()
         json_contents_watchlist_in_list = json.loads(file_contents_watchlist)
