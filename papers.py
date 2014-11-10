@@ -62,6 +62,7 @@ def decide(input_file, watchlist_file, countries_file):
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
     # For example: if "passport" is missing then the traveler is rejected regardless of other conditions
+    # All strings and string keys converted to lowercase to prevent differentiation between lower and uppercase
     for entry_dictionary in json_contents_input_in_list:
         for key_in_entry_dictionary in entry_dictionary.keys():
             key_in_entry_dictionary = key_in_entry_dictionary.lower();
@@ -97,19 +98,22 @@ def decide(input_file, watchlist_file, countries_file):
         home_dictionary = entry_dictionary[key_home];
 
         for key_in_home_dictionary in home_dictionary.keys():
-            key_in_home_dictionary = key_in_home_dictionary.lower();#To make every string key in the dictionary to lowercase;
+            key_in_home_dictionary = key_in_home_dictionary.lower();
+            #converts every string key in the dictionary to lowercase;
         for value_in_home_dictionary in home_dictionary.values():
             if isinstance(value_in_home_dictionary,str):
-                value_in_home_dictionary = value_in_home_dictionary.lower();#To make every string in the sub-dictionary of the entry record to lowercase;
+                value_in_home_dictionary = value_in_home_dictionary.lower();
+                #converts every string in the sub-dictionary of the entry record to lowercase;
 
-
+    # if the traveler's home country is Kanadia then traveler is accepts unless other conditions prevents this such
+    # as medical advisory or watchlist
         if home_dictionary[key_country_in_home] == "KAN":
             if entry_dictionary[key_entry_reason] == "returning":
                 return ["Accept"]
 
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
         for watchlist_dictionary in json_contents_watchlist_in_list:
-            #ignore cases
+            #converts all alphabetical values to lowercase to prevent differentiation between lower and uppercase
             watchlist_dictionary = [dict((k.lower(), v.lower()) for k,v in watchlist_dictionary.iteritems())]
             if entry_dictionary[key_passport] in watchlist_dictionary:
                 return ["Secondary"]
