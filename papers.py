@@ -30,36 +30,49 @@ def decide(input_file, watchlist_file, countries_file):
     with open(input_file, "r") as file_reader_input:
         file_contents_input = file_reader_input.read()
         json_contents_input_in_list = json.loads(file_contents_input)
-
+    #json.contents.watchlist contains all travelers on the watchlist which means they can go to "secondary"
     with open(watchlist_file, "r") as file_reader_watchlist:
         file_contents_watchlist = file_reader_watchlist.read()
         json_contents_watchlist_in_list = json.loads(file_contents_watchlist)
-
+    #jason.contents_countries contains list of countries in the game
+    #all the possible countries visitors can be from and traveling from
     with open(countries_file, "r") as file_reader_countries:
         file_contents_countries = file_reader_countries.read()
         json_contents_countries_in_dictionary = json.loads(file_contents_countries)
 
 
-     #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
+     #An entry should not be rejected if there is a mismatch between uppercase and lowercase.
+     # the case of the country code and passport numbers should not matter
+     # For example, "ELE" and "ele" treated as identical values
+     # Thus all values are alphabetical converted to lowercase to prevent lowercase and uppercase differentiation
     for value_in_input in json_contents_input_in_list:
         if isinstance(value_in_input,str):
-            value_in_input = value_in_input.lower() #To make every string in the list to lowercase;
+            value_in_input = value_in_input.lower()
+            #converts every string in the list to lowercase;
     for value_in_watchlist in json_contents_watchlist_in_list:
         if isinstance(value_in_watchlist,str):
-            value_in_watchlist = value_in_watchlist.lower() #To make every string in the list to lowercase;
+            value_in_watchlist = value_in_watchlist.lower()
+            #converts every string in the list to lowercase;
     for key_in_countries in json_contents_countries_in_dictionary.keys():
-        key_in_countries = key_in_countries.lower();#To make every string key in the dictionary to lowercase;
+        key_in_countries = key_in_countries.lower();
+        #converts every string key in the dictionary to lowercase;
     for value_in_countries in json_contents_countries_in_dictionary.values():
         if isinstance(value_in_countries,str):
-            value_in_countries = value_in_countries.lower();#To make every string value in the dictionary to lowercase;
+            value_in_countries = value_in_countries.lower();
+            #converts every string value in the dictionary to lowercase;
 
-    # If the required information for an entry record is incomplete, the traveler must be rejected.
+    #If the required information for an entry record is incomplete, the traveler must be rejected.
+    #If passport number is missing, then traveler must be rejected regardless of whether he or she met other conditions
+    #converting string,string key to lowercase prevents differentiation between lowercase and uppercase
+    #for example: "first_name": "vanessa" and "first_name": "VANESSA" are the same
     for entry_dictionary in json_contents_input_in_list:
         for key_in_entry_dictionary in entry_dictionary.keys():
-            key_in_entry_dictionary = key_in_entry_dictionary.lower();#To make every string key in the dictionary to lowercase;
+            key_in_entry_dictionary = key_in_entry_dictionary.lower();
+            #converts every string key in the dictionary to lowercase;
         for value_in_entry_dictionary in entry_dictionary.values():
             if isinstance(value_in_entry_dictionary,str):
-                value_in_entry_dictionary = value_in_entry_dictionary.lower();#To make every string in the sub-dictionary of the entry record to lowercase;
+                value_in_entry_dictionary = value_in_entry_dictionary.lower();
+                #converts every string in the sub-dictionary of the entry record to lowercase;
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
 
@@ -87,10 +100,12 @@ def decide(input_file, watchlist_file, countries_file):
         home_dictionary = entry_dictionary[key_home];
 
         for key_in_home_dictionary in home_dictionary.keys():
-            key_in_home_dictionary = key_in_home_dictionary.lower();#To make every string key in the dictionary to lowercase;
+            key_in_home_dictionary = key_in_home_dictionary.lower();
+            #converts every string key in the dictionary to lowercase;
         for value_in_home_dictionary in home_dictionary.values():
             if isinstance(value_in_home_dictionary,str):
-                value_in_home_dictionary = value_in_home_dictionary.lower();#To make every string in the sub-dictionary of the entry record to lowercase;
+                value_in_home_dictionary = value_in_home_dictionary.lower();
+                #converts every string in the sub-dictionary of the entry record to lowercase;
 
 
         if home_dictionary[key_country_in_home] == "KAN":
@@ -98,8 +113,10 @@ def decide(input_file, watchlist_file, countries_file):
                 return ["Accept"]
 
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
+    #json.contents,watchlist contains travelers on the watchlist
+    #firs name, last name, passport and other information must all match with traveler information on the watchlist
         for watchlist_dictionary in json_contents_watchlist_in_list:
-            #ignore cases
+            #converts dictionary values to lowercase to prevent differentiation between upper and lowercase
             watchlist_dictionary = [dict((k.lower(), v.lower()) for k,v in watchlist_dictionary.iteritems())]
             if entry_dictionary[key_passport] in watchlist_dictionary:
                 return ["Secondary"]
@@ -119,21 +136,23 @@ def decide(input_file, watchlist_file, countries_file):
                     return ["Quarantine"]
 
     #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+    #The traveller must have a valid visa. A valid visa is one that is less than two years old.
                 if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_visitor_visa_required] == 1:
                     if key_visa in entry_dictionary:
                         if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
                             return ["Reject"]
 
     #If the reason for entry is transit and the visitor has a passport from a country from which a transit visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+    #the traveller must have a valid visa. A valid visa is one that is less than two years old.
                 if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_via_country]][key_transit_visa_required] == 1:
                     if key_visa in entry_dictionary:
                         if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
                             return ["Reject"]
 
 
-#An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
+#An entry should not be rejected if there is a mismatch between uppercase and lowercase.
+#The case of the country code and passport numbers should not matter.
+#For example: "LUG" is identical to "lug"
 print(decide("test_returning_citizen.json", "watchlist.json", "countries.json"))
 
 
