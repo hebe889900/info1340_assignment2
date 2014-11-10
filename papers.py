@@ -99,11 +99,11 @@ def decide(input_file, watchlist_file, countries_file):
 
         for key_in_home_dictionary in home_dictionary.keys():
             key_in_home_dictionary = key_in_home_dictionary.lower();
-            #converts every string key in the dictionary to lowercase;
+            #Converts every string key in the dictionary to lowercase;
         for value_in_home_dictionary in home_dictionary.values():
             if isinstance(value_in_home_dictionary,str):
                 value_in_home_dictionary = value_in_home_dictionary.lower();
-                #converts every string in the sub-dictionary of the entry record to lowercase;
+                #Converts every string in the sub-dictionary of the entry record to lowercase;
 
     # if the traveler's home country is Kanadia then traveler is accepts unless other conditions prevents this such
     # as medical advisory or watchlist
@@ -113,7 +113,7 @@ def decide(input_file, watchlist_file, countries_file):
 
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
         for watchlist_dictionary in json_contents_watchlist_in_list:
-            #converts all alphabetical values to lowercase to prevent differentiation between lower and uppercase
+            #Converts all alphabetical values to lowercase to prevent differentiation between lower and uppercase
             watchlist_dictionary = [dict((k.lower(), v.lower()) for k,v in watchlist_dictionary.iteritems())]
             if entry_dictionary[key_passport] in watchlist_dictionary:
                 return ["Secondary"]
@@ -152,7 +152,9 @@ def decide(input_file, watchlist_file, countries_file):
                             return ["Reject"]
 
 
-#An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
+#An entry should not be rejected if there is a mismatch between uppercase and lowercase.
+#The case of the country code and passport numbers should not matter.
+#For example, "VANESSA" and "vanessa" are identical
 print(decide("test_returning_citizen.json", "watchlist.json", "countries.json"))
 
 
