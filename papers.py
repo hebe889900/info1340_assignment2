@@ -35,7 +35,7 @@ def decide(input_file, watchlist_file, countries_file):
     with open(watchlist_file, "r") as file_reader_watchlist:
         file_contents_watchlist = file_reader_watchlist.read()
         json_contents_watchlist_in_list = json.loads(file_contents_watchlist)
-    #json.contents.countries contains the list of countries possible
+    #json.contents.countries contains the list of countries possible in this game
     with open(countries_file, "r") as file_reader_countries:
         file_contents_countries = file_reader_countries.read()
         json_contents_countries_in_dictionary = json.loads(file_contents_countries)
@@ -53,18 +53,23 @@ def decide(input_file, watchlist_file, countries_file):
             value_in_watchlist = value_in_watchlist.lower()
             #converts every string in the list to lowercase;
     for key_in_countries in json_contents_countries_in_dictionary.keys():
-        key_in_countries = key_in_countries.lower();#To make every string key in the dictionary to lowercase;
+        key_in_countries = key_in_countries.lower();
+        #converts every string key in the dictionary to lowercase;
     for value_in_countries in json_contents_countries_in_dictionary.values():
         if isinstance(value_in_countries,str):
-            value_in_countries = value_in_countries.lower();#To make every string value in the dictionary to lowercase;
+            value_in_countries = value_in_countries.lower();
+            #Tconverts every string value in the dictionary to lowercase;
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
+    # For example: if "passport" is missing then the traveler is rejected regardless of other conditions
     for entry_dictionary in json_contents_input_in_list:
         for key_in_entry_dictionary in entry_dictionary.keys():
-            key_in_entry_dictionary = key_in_entry_dictionary.lower();#To make every string key in the dictionary to lowercase;
+            key_in_entry_dictionary = key_in_entry_dictionary.lower();
+            #converts every string key in the dictionary to lowercase;
         for value_in_entry_dictionary in entry_dictionary.values():
             if isinstance(value_in_entry_dictionary,str):
-                value_in_entry_dictionary = value_in_entry_dictionary.lower();#To make every string in the sub-dictionary of the entry record to lowercase;
+                value_in_entry_dictionary = value_in_entry_dictionary.lower();
+                #converts every string in the sub-dictionary of the entry record to lowercase;
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
 
