@@ -123,6 +123,7 @@ def decide(input_file, watchlist_file, countries_file):
                     return ["Secondary"]
 
     #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
+    #Converts all alphabetical values to lowercase to prevent differentiation between lower and uppercase
         for countries_dictionary in json_contents_countries_in_dictionary:
             key_code_country = entry_dictionary[key_from][key_from_country]
             if json_contents_countries_in_dictionary[key_code_country][key_medical_advisory].isspace is False:
@@ -133,14 +134,18 @@ def decide(input_file, watchlist_file, countries_file):
                     return ["Quarantine"]
 
     #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+    #The traveller must have a valid visitor visa.
+    #A valid visa is one that is less than two years old. Time calculated from present time to the date on the visa.
+    #For example, if the visa is "1999-05-19" and is it now "2012-05-19" then visa is expired.
                 if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_visitor_visa_required] == 1:
                     if key_visa in entry_dictionary:
                         if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
                             return ["Reject"]
 
     #If the reason for entry is transit and the visitor has a passport from a country from which a transit visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+    #The traveller must have a valid transit visa.
+    # A valid visa is one that is less than two years old. Time calculated from present time to the date on the visa.
+    #For example, if the visa is "1999-05-19" and is it now "2012-05-19" then visa is expired.
                 if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_via_country]][key_transit_visa_required] == 1:
                     if key_visa in entry_dictionary:
                         if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
