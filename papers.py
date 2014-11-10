@@ -88,7 +88,7 @@ def decide(input_file, watchlist_file, countries_file):
         if key_visa in entry_dictionary.keys():
             if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_visitor_visa_required] == 1:
 
-                if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
+                if entry_dictionary[key_visa][key_visa_date].date().day - datetime.datetime.now().day > 2*365:
                     string_result.append("Reject")
                     continue
 
@@ -97,7 +97,7 @@ def decide(input_file, watchlist_file, countries_file):
         if key_visa in entry_dictionary.keys():
             if json_contents_countries_in_dictionary[entry_dictionary[key_via][key_via_country]][key_transit_visa_required] == 1:
                 if key_visa in entry_dictionary:
-                    if entry_dictionary[key_visa][key_visa_date].date().day- datetime.datetime.now().day > 2*365:
+                    if entry_dictionary[key_visa][key_visa_date].date().day - datetime.datetime.now().day > 2*365:
                         string_result.append("Reject")
                         continue
 
@@ -109,12 +109,12 @@ def decide(input_file, watchlist_file, countries_file):
                 break
 
             if key_via in entry_dictionary:
-                print(json_contents_countries_in_dictionary[key_code_country][key_medical_advisory])
                 if (json_contents_countries_in_dictionary[entry_dictionary[key_via][key_from_country]][key_medical_advisory] == "" )is False:
                     string_result.append("Quarantine")
                     break
-        continue
+            continue
 
+        continue
 
         if home_dictionary[key_country_in_home] == "kan":
             if entry_dictionary[key_entry_reason] == "returning":
@@ -136,16 +136,12 @@ def decide(input_file, watchlist_file, countries_file):
                     string_result.append("Secondary")
                     continue
 
+            continue
 
-
-
+        continue
         string_result.append("Reject")
         continue
     return string_result
-
-print (decide("test_quarantine.json", "watchlist.json", "countries.json"))
-
-#An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
 
 
 
@@ -159,7 +155,7 @@ def valid_passport_format(passport_number):
     :param passport_number: alpha-numeric string
     :return: Boolean; True if the format is valid, False otherwise
     """
-    passport_format = re.compile('.{5}-.{5}-.{5}-.{5}-.{5}')
+    passport_format =  re.compile('^\w{5}-\w{5}$')
 
     if passport_format.match(passport_number):
         return True

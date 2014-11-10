@@ -16,9 +16,9 @@ from papers import decide
 
 
 def test_basic():
-    assert decide("test_returning_citizen.json", "watchlist.json", "countries.json") == ["Accept", "Accept"]
-    assert decide("test_watchlist.json", "watchlist.json", "countries.json") == ["Secondary"]
-    assert decide("test_quarantine.json", "watchlist.json", "countries.json") == ["Quarantine"]
+    assert decide("test_returning_citizen.json", "watchlist.json", "countries.json") == ["Accept", "Accept"],"Work"
+    assert decide("test_watchlist.json", "watchlist.json", "countries.json") == ["Secondary"],"Work"
+    assert decide("test_quarantine.json", "watchlist.json", "countries.json") == ["Quarantine"],"Work"
 
 
 def test_files():
