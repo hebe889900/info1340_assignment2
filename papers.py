@@ -35,19 +35,23 @@ def decide(input_file, watchlist_file, countries_file):
     with open(watchlist_file, "r") as file_reader_watchlist:
         file_contents_watchlist = file_reader_watchlist.read()
         json_contents_watchlist_in_list = json.loads(file_contents_watchlist)
-
+    #json.contents.countries contains the list of countries possible
     with open(countries_file, "r") as file_reader_countries:
         file_contents_countries = file_reader_countries.read()
         json_contents_countries_in_dictionary = json.loads(file_contents_countries)
 
 
-     #An entry should not be rejected if there is a mismatch between uppercase and lowercase. For example, the case of the country code and passport numbers should not matter.
+     #An entry should not be rejected if there is a mismatch between uppercase and lowercase.
+     #the case of the country code and passport numbers should not matter.
+     #For example: "BRD" and "brd" are identical
     for value_in_input in json_contents_input_in_list:
         if isinstance(value_in_input,str):
-            value_in_input = value_in_input.lower() #To make every string in the list to lowercase;
+            value_in_input = value_in_input.lower()
+            #converts every string in the list to lowercase;
     for value_in_watchlist in json_contents_watchlist_in_list:
         if isinstance(value_in_watchlist,str):
-            value_in_watchlist = value_in_watchlist.lower() #To make every string in the list to lowercase;
+            value_in_watchlist = value_in_watchlist.lower()
+            #converts every string in the list to lowercase;
     for key_in_countries in json_contents_countries_in_dictionary.keys():
         key_in_countries = key_in_countries.lower();#To make every string key in the dictionary to lowercase;
     for value_in_countries in json_contents_countries_in_dictionary.values():
