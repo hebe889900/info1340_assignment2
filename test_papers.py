@@ -48,7 +48,7 @@ def test_visa_valid():
 
 # Test to reject the person who only have last name and first name on watchlist without passport number on watchlist.
 def test_secondary():
-    assert decide("test_secondary.json", "watchlist.json", "countries.json") == ["Reject"]
+    assert decide("test_secondary.json", "watchlist.json", "countries.json") == ["Secondary"]
     # First name:LIBBIE Last name: Lusk.
 
 #Test travelers who did not come from the country with medical advisory but went via the country with medical advisory.
