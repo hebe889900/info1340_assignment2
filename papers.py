@@ -11,16 +11,16 @@ __license__ = "MIT License"
 __status__ = "Prototype"
 
 """
-The program is designed by Zhong Yan and Terry Liu. The basic function for this program is receiving the entry
-reord and outputs one of four Strings for each record. Appropriate docstring has been made above each part that will
-make some confusion.
+The program is designed by Zhong Yan and Tao Ran,Liu. The basic function for this program is receiving the entry
+record and outputs one of four Strings for each record. Appropriate docstring has been made above each part to prevent
+confusion.
 """
 # imports one per line
 import re
 import datetime
 import json
 
-
+# In the game the country in which travelers are attempting tro enter is Kanadia, "KAN".
 def decide(input_file, watchlist_file, countries_file):
     """
     Decides whether a traveller's entry into Kanadia should be accepted
@@ -58,7 +58,7 @@ def decide(input_file, watchlist_file, countries_file):
     for entry_dictionary in json_contents_input_in_list:
         year = datetime.timedelta(days=365) # A variable "year" that contains  365 days
         two_years = 2*year
-        # Year multiplied by two to make the new variable two_years for the convenient calculating of valid visa date. 
+        # Year multiplied by two to make the new variable two_years for the convenient calculating of valid visa date.
 
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
@@ -89,6 +89,7 @@ def decide(input_file, watchlist_file, countries_file):
                     continue
 
     # If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
+    # All alphabetical values to lowercase to prevent differentiation between lower and uppercase
         for countries_dictionary in json_contents_countries_in_dictionary:
             key_code_country = entry_dictionary["from"]["country"]
             if (json_contents_countries_in_dictionary[key_code_country]["medical_advisory"] == "") is False:
@@ -101,7 +102,7 @@ def decide(input_file, watchlist_file, countries_file):
                     break
             continue
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
-
+    # All alphabetical values to lowercase to prevent differentiation between lower and uppercase
         for watchlist_dictionary in json_contents_watchlist_in_list:
             #ignore case sensitives
             entry_dictionary["passport"] = entry_dictionary["passport"].lower();
