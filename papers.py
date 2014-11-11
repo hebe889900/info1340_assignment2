@@ -58,7 +58,7 @@ def decide(input_file, watchlist_file, countries_file):
     for entry_dictionary in json_contents_input_in_list:
         year = datetime.timedelta(days=365) # A variable "year" that contains  365 days
         two_years = 2*year
-        # Year multiplied by two to make the new variable two_years for the convenient calculating of valid visa date
+        # Year multiplied by two to make the new variable two_years for the convenient calculating of valid visa date. 
 
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
