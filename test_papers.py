@@ -28,10 +28,13 @@ def test_files():
 
 def test_visa_valid():
     assert decide("test_vistor_visa_expired.json", "watchlist.json", "countries.json") == ["Reject"] #from CFR
-    assert decide("test_transit_visa_expired.json", "watchlist.json", "countries.json") == ["Reject"] #from LUG (I personally changed the vistor_visa_required for LUG to 0 for convenient test)
+    assert decide("test_transit_visa_expired.json", "watchlist.json", "countries.json") == ["Reject"]
+    #from LUG (I personally changed the visitor_visa_required for LUG to 0 for convenient testing)
 
-def test_secondary():# Test the person who only have last name and first name on watchlist without passport number on watchlist
-    assert decide("test_secondary.json", "watchlist.json", "countries.json") == ["Reject"]# First name:LIBBIE Last name: Lusk
+def test_secondary():
+    assert decide("test_secondary.json", "watchlist.json", "countries.json") == ["Reject"]
+    # Tests the person who only have last name and first name on watchlist without passport number on watchlist
+    # For example: First name:LIBBIE Last name: Lusk
 
 
 
