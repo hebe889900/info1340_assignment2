@@ -10,6 +10,11 @@ __license__ = "MIT License"
 
 __status__ = "Prototype"
 
+"""
+The program is designed by Zhong Yan and Terry Liu. The basic function for this program is receiving the entry
+reord and outputs one of four Strings for each record. Appropriate docstring has been made above each part that will
+make some confusion.
+"""
 # imports one per line
 import re
 import datetime
@@ -43,23 +48,18 @@ def decide(input_file, watchlist_file, countries_file):
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
     for entry_dictionary in json_contents_input_in_list:
+        year = datetime.timedelta(days=365) # A variable "year" that contains  365 days
+        two_years = 2*year # Let year multiples two to make the new variable two_years for the convenient calculating of valid visa date
+
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
-
-
-        year = datetime.timedelta(days=365)
-        two_years = 2*year
-
-
-
         home_dictionary = entry_dictionary["home"]
-
         home_dictionary = dict((k.lower(), v.lower()) for k, v in home_dictionary.iteritems())# Make the home dictionary inside the whole dictionary to lowercase
 
 
 
-    #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+        #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
+        # the traveller must have a valid visa. A valid visa is one that is less than two years old.
         if json_contents_countries_in_dictionary[entry_dictionary["from"]["country"]]["visitor_visa_required"] == "1":
             if "visa" in entry_dictionary.keys():
                 if datetime.datetime.now() - datetime.datetime.strptime(entry_dictionary["visa"]["visa_date"], '%Y-%m-%d')  >=  two_years:
@@ -89,7 +89,7 @@ def decide(input_file, watchlist_file, countries_file):
     #If the traveller has a name or passport on the watch list, she or he must be sent to secondary processing.
 
         for watchlist_dictionary in json_contents_watchlist_in_list:
-            #ignore cases
+            #ignore case sensitives
             entry_dictionary["passport"] = entry_dictionary["passport"].lower();
             entry_dictionary["last_name"] = entry_dictionary["last_name"].lower();
             entry_dictionary["first_name"] = entry_dictionary["first_name"].lower();
@@ -114,8 +114,6 @@ def decide(input_file, watchlist_file, countries_file):
         string_result.append("Reject")
         continue
     return string_result
-
-
 
 
 
