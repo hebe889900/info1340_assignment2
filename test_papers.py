@@ -35,7 +35,7 @@ def test_basic():
 
 
 def test_files():
-    FileNotFoundError = IOError
+    FileNotFoundError = IOError # Raises FileNotFoundError if there is IO error.
     with papers.raises(FileNotFoundError):
         decide("test_returning_citizen.json", "", "countries.json")
 
