@@ -34,47 +34,61 @@ def decide(input_file, watchlist_file, countries_file):
     with open(input_file, "r") as file_reader_input:
         file_contents_input = file_reader_input.read()
         json_contents_input_in_list = json.loads(file_contents_input)
+        # json.contents.input contains the list of travelers attempting to enter Kanadia's border
+
 
     with open(watchlist_file, "r") as file_reader_watchlist:
         file_contents_watchlist = file_reader_watchlist.read()
         json_contents_watchlist_in_list = json.loads(file_contents_watchlist)
+        # json.contents.watchlist contains the list of travelers on the watchlist who should be sent to "secondary"
+
 
     with open(countries_file, "r") as file_reader_countries:
         file_contents_countries = file_reader_countries.read()
         json_contents_countries_in_dictionary = json.loads(file_contents_countries)
+        # json.contents.countries contains the list of countries possible in this game
 
-    string_result = [] #Create an empty string list to store the different output results.
+
+    string_result = [] # Create an empty string list to store the different output results.
 
 
     # If the required information for an entry record is incomplete, the traveler must be rejected.
+    # For example: if "passport" is missing then the traveler is rejected regardless of other conditions
+    # All strings and string keys converted to lowercase to prevent differentiation between lower and uppercase
     for entry_dictionary in json_contents_input_in_list:
         year = datetime.timedelta(days=365) # A variable "year" that contains  365 days
-        two_years = 2*year # Let year multiples two to make the new variable two_years for the convenient calculating of valid visa date
+        two_years = 2*year
+        # Year multiplied by two to make the new variable two_years for the convenient calculating of valid visa date. 
 
         if set(["passport","first_name","last_name","birth_date","home","from","entry_reason"]).issubset(entry_dictionary)is False:
                 return ["Reject"]
         home_dictionary = entry_dictionary["home"]
-        home_dictionary = dict((k.lower(), v.lower()) for k, v in home_dictionary.iteritems())# Make the home dictionary inside the whole dictionary to lowercase
+        home_dictionary = dict((k.lower(), v.lower()) for k, v in home_dictionary.iteritems())
+        # Converts every string key in the dictionary to lowercase
 
 
 
-        #If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
-        # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+        # If the reason for entry is to visit and the visitor has a passport from a country from which a visitor visa is required,
+        # The traveller must have a valid visa.
+        # A valid visa is one that is less than two years old.Time calculated from present time to the date on the visa.
+        # For example, if the visa is "1999-05-19" and is it now "2012-05-19" then visa is expired.
         if json_contents_countries_in_dictionary[entry_dictionary["from"]["country"]]["visitor_visa_required"] == "1":
             if "visa" in entry_dictionary.keys():
                 if datetime.datetime.now() - datetime.datetime.strptime(entry_dictionary["visa"]["visa_date"], '%Y-%m-%d')  >=  two_years:
                     string_result.append("Reject")
                     continue
 
-    #If the reason for entry is transit and the visitor has a passport from a country from which a transit visa is required,
-    # the traveller must have a valid visa. A valid visa is one that is less than two years old.
+    # If the reason for entry is transit and the visitor has a passport from a country from which a transit visa is required,
+    # The traveller must have a valid visa.
+    # A valid visa is one that is less than two years old. Time calculated from present time to the date on the visa.
+    # For example, if the visa is "1999-05-19" and is it now "2012-05-19" then visa is expired.
         if json_contents_countries_in_dictionary[entry_dictionary["from"]["country"]]["transit_visa_required"] == "1":
             if "visa" in entry_dictionary.keys():
                 if  datetime.datetime.now() - datetime.datetime.strptime(entry_dictionary["visa"]["visa_date"], '%Y-%m-%d')  >=  two_years:
                     string_result.append("Reject")
                     continue
 
-    #If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
+    # If the traveler is coming from or via a country that has a medical advisory, he or she must be send to quarantine.
         for countries_dictionary in json_contents_countries_in_dictionary:
             key_code_country = entry_dictionary["from"]["country"]
             if (json_contents_countries_in_dictionary[key_code_country]["medical_advisory"] == "") is False:
